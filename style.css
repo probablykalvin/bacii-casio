@@ -757,9 +757,6 @@ main {
     max-width: 100%;
   }
 
-  .result-inner { flex-direction: column; text-align: center; }
-  .result-details { align-items: center; }
-
   .card { padding: 20px; }
   main { padding: 20px 16px 60px; }
   .topbar { padding: 12px 16px; }
