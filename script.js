@@ -48,7 +48,16 @@
       breakdownTitle: 'Detailed Breakdown',
       thBreakdownSubject: 'Subject',
       thBreakdownScore: 'Score',
-      thBreakdownPct: 'Percentage'
+      thBreakdownPct: 'Percentage',
+      saveBtn: 'Save',
+      shareBtn: 'Share',
+      copyLink: 'Copy Link',
+      downloadImage: 'Download Image',
+      saveModalTitle: 'Save Score Profile',
+      scoreNameLabel: 'Profile Name',
+      scoreNamePlaceholder: 'e.g. Target Score',
+      confirmSaveBtn: 'Save Profile',
+      scoresModalTitle: 'My Saved Scores'
     },
     kh: {
       tag: 'បាក់ II',
@@ -93,7 +102,16 @@
       breakdownTitle: 'របាយការណ៍លម្អិត',
       thBreakdownSubject: 'មុខវិជ្ជា',
       thBreakdownScore: 'ពិន្ទុ',
-      thBreakdownPct: 'ភាគរយ'
+      thBreakdownPct: 'ភាគរយ',
+      saveBtn: 'រក្សាទុក',
+      shareBtn: 'ចែករំលែក',
+      copyLink: 'ចម្លងតំណ',
+      downloadImage: 'ទាញយករូបភាព',
+      saveModalTitle: 'រក្សាទុកពិន្ទុប្រឡង',
+      scoreNameLabel: 'ឈ្មោះពិន្ទុប្រឡង',
+      scoreNamePlaceholder: 'ឧទាហរណ៍៖ ពិន្ទុគោលដៅ',
+      confirmSaveBtn: 'រក្សាទុក',
+      scoresModalTitle: 'ពិន្ទុប្រឡងដែលបានរក្សាទុករបស់ខ្ញុំ'
     }
   };
 
@@ -274,6 +292,25 @@
     document.getElementById('th-breakdown-subject').textContent = tr.thBreakdownSubject;
     document.getElementById('th-breakdown-score').textContent = tr.thBreakdownScore;
     document.getElementById('th-breakdown-pct').textContent = tr.thBreakdownPct;
+
+    const saveBtnLabel = document.getElementById('save-btn-label');
+    if (saveBtnLabel) saveBtnLabel.textContent = tr.saveBtn;
+    const shareBtnLabel = document.getElementById('share-btn-label');
+    if (shareBtnLabel) shareBtnLabel.textContent = tr.shareBtn;
+    const modalCopyLabel = document.getElementById('modal-copy-label');
+    if (modalCopyLabel) modalCopyLabel.textContent = tr.copyLink;
+    const modalDownloadLabel = document.getElementById('modal-download-label');
+    if (modalDownloadLabel) modalDownloadLabel.textContent = tr.downloadImage;
+    const saveModalTitle = document.getElementById('save-modal-title');
+    if (saveModalTitle) saveModalTitle.textContent = tr.saveModalTitle;
+    const scoreNameLabel = document.getElementById('score-name-label');
+    if (scoreNameLabel) scoreNameLabel.textContent = tr.scoreNameLabel;
+    const scoreNameInput = document.getElementById('score-name-input');
+    if (scoreNameInput) scoreNameInput.placeholder = tr.scoreNamePlaceholder;
+    const confirmSaveBtn = document.getElementById('confirm-save-btn');
+    if (confirmSaveBtn) confirmSaveBtn.textContent = tr.confirmSaveBtn;
+    const scoresModalTitle = document.getElementById('scores-modal-title');
+    if (scoresModalTitle) scoresModalTitle.textContent = tr.scoresModalTitle;
 
     // Re-translate the result card if it's visible
     if (lastResult && !resultCard.classList.contains('hidden')) {
@@ -546,6 +583,18 @@
       wrapper.style.position = 'absolute';
       wrapper.style.left = '-9999px';
       wrapper.style.top = '-9999px';
+      wrapper.style.display = 'flex';
+      wrapper.style.flexDirection = 'column';
+      wrapper.style.alignItems = 'center';
+      
+      const headerLogo = document.createElement('div');
+      headerLogo.style.textAlign = 'center';
+      headerLogo.style.marginBottom = '24px';
+      headerLogo.innerHTML = `
+        <h2 style="font-family: 'Inter', sans-serif; font-size: 2rem; font-weight: 900; letter-spacing: -.04em; margin: 0; color: var(--text-primary);">BACCA<span style="color: var(--accent);">SIO</span></h2>
+        <p style="font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); margin: 6px 0 0 0;">by probablykalvin (Reach)</p>
+      `;
+      wrapper.appendChild(headerLogo);
       
       wrapper.appendChild(clone);
       
