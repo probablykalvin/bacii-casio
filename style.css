@@ -750,11 +750,7 @@ main {
 @media (max-width: 600px) {
   .hero h2 { font-size: 2rem; }
 
-  .subjects-grid { grid-template-columns: 1fr; }
-
-  .subject-field:last-child:nth-child(odd) {
-    max-width: 100%;
-  }
+  /* .subjects-grid { grid-template-columns: 1fr; } removed to keep 2 columns */
 
   .card { padding: 16px; }
   main { padding: 16px 12px 60px; }
@@ -780,9 +776,12 @@ main {
   
   .result-inner {
     gap: clamp(12px, 4vw, 28px);
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-start;
   }
   .grade-letter {
-    font-size: clamp(3.5rem, 15vw, 5.5rem);
+    font-size: clamp(2.5rem, 10vw, 5.5rem);
   }
   .score-value {
     font-size: clamp(1.4rem, 6vw, 2rem);
