@@ -7,7 +7,7 @@
   const I18N = {
     en: {
       tag: 'Bac II',
-      heroDesc: 'Enter your seven Cambodian Bac II exam subject scores below. Instantly see your total and letter grade.',
+      heroDesc: 'Enter your exam subject scores below.',
       cardTitle: 'Exam Scores',
       trackScience: 'Science',
       trackSocial: 'Social Science',
@@ -18,7 +18,7 @@
       thStatus: 'Status',
       pass: 'Pass',
       fail: 'Fail',
-      footer: '© 2026 BACCASIO — Built for Cambodian students 🇰🇭',
+      footer: '© 2026 BACCASIO — probablykalvin.com',
       gradeRequires: (letter, min, max) => `Grade <strong>${letter}</strong> requires <strong>${min}–${max}</strong> points`,
       subjects: {
         science: [
@@ -52,7 +52,7 @@
     },
     kh: {
       tag: 'បាក់ II',
-      heroDesc: 'បញ្ចូលពិន្ទុមុខវិជ្ជាទាំង ៧ នៃការប្រឡងបាក់ II ខាងក្រោម។ មើលពិន្ទុសរុប និងកម្រិតរបស់អ្នកភ្លាមៗ។',
+      heroDesc: 'បញ្ចូលពិន្ទុមុខវិជ្ជាខាងក្រោម។',
       cardTitle: 'ពិន្ទុប្រឡង',
       trackScience: 'វិទ្យាសាស្ត្រ',
       trackSocial: 'វិទ្យាសាស្ត្រសង្គម',
@@ -63,7 +63,7 @@
       thStatus: 'ស្ថានភាព',
       pass: 'ជាប់',
       fail: 'ធ្លាក់',
-      footer: '© ២០២៦ BACCASIO — បង្កើតសម្រាប់សិស្សកម្ពុជា 🇰🇭',
+      footer: '© ២០២៦ BACCASIO — probablykalvin.com',
       gradeRequires: (letter, min, max) => `កម្រិត <strong>${letter}</strong> ត្រូវការ <strong>${min}–${max}</strong> ពិន្ទុ`,
       subjects: {
         science: [
@@ -105,107 +105,7 @@
 
   function t() { return I18N[currentLang]; }
 
-  /* ═══════════════════════════════════════════
-     INTERACTIVE DOT GRID BACKGROUND
-     ═══════════════════════════════════════════ */
-  const canvas = document.getElementById('dot-canvas');
-  const ctx = canvas.getContext('2d');
-  let dots = [];
-  let mouse = { x: -9999, y: -9999 };
-  const DOT_SPACING = 28;
-  const DOT_RADIUS = 1.2;
-  const INFLUENCE_RADIUS = 120;
 
-  function getAccentRGB() {
-    return { r: 88, g: 101, b: 242 };
-  }
-
-  function getBaseGray() {
-    const theme = document.body.getAttribute('data-theme');
-    return theme === 'light'
-      ? { r: 0, g: 0, b: 0, a: 0.08 }
-      : { r: 255, g: 255, b: 255, a: 0.08 };
-  }
-
-  function initDots() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    dots = [];
-    const cols = Math.ceil(canvas.width / DOT_SPACING) + 1;
-    const rows = Math.ceil(canvas.height / DOT_SPACING) + 1;
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        dots.push({
-          x: c * DOT_SPACING,
-          y: r * DOT_SPACING,
-          glow: 0,
-          fading: false
-        });
-      }
-    }
-  }
-
-  function drawDots() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const base = getBaseGray();
-    const accent = getAccentRGB();
-
-    for (const dot of dots) {
-      const dx = mouse.x - dot.x;
-      const dy = mouse.y - dot.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-
-      if (dist < INFLUENCE_RADIUS) {
-        const proximity = 1 - (dist / INFLUENCE_RADIUS);
-        dot.glow = Math.min(1, dot.glow + proximity * 0.15);
-        dot.fading = false;
-      } else {
-        dot.fading = true;
-      }
-
-      if (dot.fading && dot.glow > 0) {
-        dot.glow *= 0.94;
-        if (dot.glow < 0.005) dot.glow = 0;
-      }
-
-      const g = dot.glow;
-      const r = base.r + (accent.r - base.r) * g;
-      const gn = base.g + (accent.g - base.g) * g;
-      const b = base.b + (accent.b - base.b) * g;
-      const a = base.a + (1 - base.a) * g * 0.7;
-
-      ctx.beginPath();
-      ctx.arc(dot.x, dot.y, DOT_RADIUS + g * 1.5, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${Math.round(r)}, ${Math.round(gn)}, ${Math.round(b)}, ${a.toFixed(3)})`;
-      ctx.fill();
-
-      if (g > 0.3) {
-        ctx.beginPath();
-        ctx.arc(dot.x, dot.y, DOT_RADIUS + g * 5, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${accent.r}, ${accent.g}, ${accent.b}, ${(g * 0.1).toFixed(3)})`;
-        ctx.fill();
-      }
-    }
-
-    requestAnimationFrame(drawDots);
-  }
-
-  window.addEventListener('mousemove', (e) => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-  });
-
-  window.addEventListener('mouseleave', () => {
-    mouse.x = -9999;
-    mouse.y = -9999;
-  });
-
-  window.addEventListener('resize', () => {
-    initDots();
-  });
-
-  initDots();
-  drawDots();
 
   /* ═══════════════════════════════════════════
      GRADE CALCULATOR LOGIC
@@ -490,7 +390,7 @@
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${name}</td>
-        <td style="font-family: 'JetBrains Mono', monospace; color: var(--text-primary); font-weight: 500;">
+        <td style="font-family: 'JetBrains Mono', monospace; color: var(--text-primary); font-weight: 500; white-space: nowrap;">
           ${scoreVal} <span style="opacity: 0.45; font-size: 0.75rem; font-weight: 400;">/ ${maxVal}</span>
         </td>
         <td>
@@ -618,6 +518,295 @@
     });
   });
 
+  /* ── Share Modal Logic ── */
+  const shareBtn = document.getElementById('share-btn');
+  const shareContainer = document.getElementById('share-container');
+  const shareModal = document.getElementById('share-modal');
+  const modalClose = document.getElementById('modal-close');
+  const modalPreview = document.getElementById('modal-preview');
+  const modalCopyBtn = document.getElementById('modal-copy-btn');
+  const modalDownloadBtn = document.getElementById('modal-download-btn');
+
+  if (shareBtn && shareModal) {
+    shareBtn.addEventListener('click', () => {
+      if (typeof html2canvas === 'undefined') {
+        alert('Image generation library not loaded.');
+        return;
+      }
+      
+      const originalText = shareBtn.innerHTML;
+      shareBtn.innerHTML = '⏳ Loading...';
+      shareBtn.disabled = true;
+
+      // Create an off-screen wrapper for the screenshot
+      const clone = resultCard.cloneNode(true);
+      clone.querySelector('#share-container').style.display = 'none';
+      
+      // Clear sparkle particles so they don't get captured mid-flight
+      const clonedSparkles = clone.querySelector('#sparkle-container');
+      if (clonedSparkles) clonedSparkles.innerHTML = '';
+      
+      clone.classList.remove('show'); // Remove the glow animation pseudo-element
+      clone.style.backdropFilter = 'none';
+      clone.style.webkitBackdropFilter = 'none';
+      clone.style.width = resultCard.offsetWidth + 'px';
+      clone.style.margin = '0';
+      
+      const wrapper = document.createElement('div');
+      wrapper.style.padding = '40px';
+      wrapper.style.paddingBottom = '30px';
+      wrapper.style.background = document.body.getAttribute('data-theme') === 'light' ? '#f5f5f7' : '#0a0a0c';
+      wrapper.style.position = 'absolute';
+      wrapper.style.left = '-9999px';
+      wrapper.style.top = '-9999px';
+      
+      wrapper.appendChild(clone);
+      
+      // Add watermark
+      const watermark = document.createElement('div');
+      const footerEl = document.getElementById('footer-text');
+      watermark.textContent = footerEl ? footerEl.textContent : '© 2026 BACCASIO — probablykalvin.com';
+      watermark.style.textAlign = 'center';
+      watermark.style.marginTop = '24px';
+      watermark.style.fontSize = '0.75rem';
+      watermark.style.color = 'var(--text-tertiary)';
+      wrapper.appendChild(watermark);
+
+      document.body.appendChild(wrapper);
+
+      html2canvas(wrapper, {
+        scale: 2,
+        backgroundColor: null
+      }).then(canvas => {
+        document.body.removeChild(wrapper);
+        shareBtn.innerHTML = originalText;
+        shareBtn.disabled = false;
+
+        const dataUrl = canvas.toDataURL('image/png');
+        modalPreview.innerHTML = `<img src="${dataUrl}" alt="Score Card Preview" style="width: 100%; border-radius: 12px; box-shadow: var(--shadow);" />`;
+        
+        // Open modal
+        shareModal.classList.remove('hidden');
+      }).catch(err => {
+        console.error('Failed to generate image', err);
+        if (document.body.contains(wrapper)) document.body.removeChild(wrapper);
+        shareBtn.innerHTML = originalText;
+        shareBtn.disabled = false;
+        alert('Could not generate preview.');
+      });
+    });
+
+    modalClose.addEventListener('click', () => {
+      shareModal.classList.add('hidden');
+    });
+
+    // Close when clicking outside of modal content
+    shareModal.addEventListener('click', (e) => {
+      if (e.target === shareModal) {
+        shareModal.classList.add('hidden');
+      }
+    });
+
+    modalCopyBtn.addEventListener('click', () => {
+      const inputs = grid.querySelectorAll('input');
+      const scores = Array.from(inputs).map(inp => inp.value || 0).join('-');
+      const prefix = currentTrack === 'science' ? 'sci' : 'soc';
+      const payload = prefix + '-' + scores;
+      const encoded = btoa(payload).replace(/=/g, ''); // Short, clean base64 string
+      
+      const url = new URL(window.location.href);
+      url.search = ''; // Clear other params
+      url.searchParams.set('s', encoded);
+      
+      navigator.clipboard.writeText(url.toString()).then(() => {
+        const originalText = modalCopyBtn.innerHTML;
+        modalCopyBtn.innerHTML = '✅ Copied!';
+        setTimeout(() => {
+          modalCopyBtn.innerHTML = originalText;
+        }, 2000);
+      });
+    });
+
+    modalDownloadBtn.addEventListener('click', () => {
+      const img = modalPreview.querySelector('img');
+      if (img) {
+        const link = document.createElement('a');
+        link.download = `baccasio-score-${Date.now()}.png`;
+        link.href = img.src;
+        link.click();
+      }
+    });
+  }
+
   /* ── Init ── */
   applyLanguage();
+
+  /* ── URL State Parsing ── */
+  const params = new URLSearchParams(window.location.search);
+  const sParam = params.get('s');
+  const oldTrack = params.get('track'); // Keep backwards compatibility
+  
+  if (sParam || oldTrack) {
+    let sharedTrack = null;
+    let scoreArr = [];
+    
+    if (sParam) {
+      try {
+        let b64 = sParam;
+        while (b64.length % 4 > 0) b64 += '=';
+        const decoded = atob(b64);
+        const parts = decoded.split('-');
+        if (parts.length >= 8) {
+          sharedTrack = parts[0] === 'soc' ? 'social' : 'science';
+          scoreArr = parts.slice(1);
+        }
+      } catch (e) {
+        console.error('Invalid share link format.');
+      }
+    } else if (oldTrack) {
+      sharedTrack = oldTrack;
+      const oldScores = params.get('scores');
+      if (oldScores) scoreArr = oldScores.split(',');
+    }
+    
+    if (sharedTrack && SUBJECT_MAX[sharedTrack]) {
+      // Select the correct track
+      const trackBtn = document.querySelector(`.track-btn[data-track="${sharedTrack}"]`);
+      if (trackBtn) trackBtn.click();
+      
+      const inputs = grid.querySelectorAll('input');
+      inputs.forEach((inp, i) => {
+        if (scoreArr[i] !== undefined) {
+          inp.value = scoreArr[i];
+        }
+      });
+      
+      // Clear URL query parameters so a manual refresh doesn't loop the shared scores
+      window.history.replaceState({}, document.title, window.location.pathname);
+      
+      // Calculate automatically after a short delay
+      setTimeout(calculate, 100);
+    }
+  }
+
+  /* ── Saving Profiles Logic ── */
+  let savedProfiles = [];
+  try {
+    savedProfiles = JSON.parse(localStorage.getItem('baccasio_saved_profiles') || '[]');
+  } catch (e) {
+    savedProfiles = [];
+  }
+
+  const myScoresBtn = document.getElementById('my-scores-btn');
+  const scoresModal = document.getElementById('scores-modal');
+  const scoresList = document.getElementById('saved-scores-list');
+  const saveScoreBtn = document.getElementById('save-score-btn');
+  const saveModal = document.getElementById('save-modal');
+  const confirmSaveBtn = document.getElementById('confirm-save-btn');
+  const saveNameInput = document.getElementById('score-name-input');
+
+  function escapeHTML(str) {
+    return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+    }[tag] || tag));
+  }
+
+  function renderSavedScores() {
+    if (savedProfiles.length === 0) {
+      scoresList.innerHTML = `<div class="empty-state" id="empty-scores-text">No saved profiles yet.</div>`;
+      return;
+    }
+    scoresList.innerHTML = '';
+    savedProfiles.forEach(profile => {
+      const item = document.createElement('div');
+      item.className = 'saved-score-item';
+      const trackName = profile.track === 'science' ? 'Science' : 'Social Science';
+      item.innerHTML = `
+        <div class="saved-score-info">
+          <div class="saved-score-name">${escapeHTML(profile.name)}</div>
+          <div class="saved-score-details">${trackName} • ${profile.total} pts</div>
+        </div>
+        <div class="saved-score-actions">
+          <button class="btn-delete" aria-label="Delete">🗑️</button>
+        </div>
+      `;
+      item.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-delete')) return;
+        
+        const trackBtn = document.querySelector(`.track-btn[data-track="${profile.track}"]`);
+        if (trackBtn) trackBtn.click();
+        
+        const inputs = grid.querySelectorAll('input');
+        inputs.forEach((inp, i) => {
+          inp.value = profile.scores[i] !== undefined ? profile.scores[i] : '';
+        });
+        
+        scoresModal.classList.add('hidden');
+        setTimeout(calculate, 100);
+      });
+
+      const deleteBtn = item.querySelector('.btn-delete');
+      deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (confirm('Delete this saved score?')) {
+          savedProfiles = savedProfiles.filter(p => p.id !== profile.id);
+          localStorage.setItem('baccasio_saved_profiles', JSON.stringify(savedProfiles));
+          renderSavedScores();
+        }
+      });
+      scoresList.appendChild(item);
+    });
+  }
+
+  if (myScoresBtn && scoresModal) {
+    myScoresBtn.addEventListener('click', () => {
+      renderSavedScores();
+      scoresModal.classList.remove('hidden');
+    });
+    document.getElementById('scores-modal-close').addEventListener('click', () => scoresModal.classList.add('hidden'));
+    scoresModal.addEventListener('click', (e) => { if(e.target === scoresModal) scoresModal.classList.add('hidden'); });
+  }
+
+  if (saveScoreBtn && saveModal) {
+    saveScoreBtn.addEventListener('click', () => {
+      saveNameInput.value = '';
+      saveModal.classList.remove('hidden');
+      saveNameInput.focus();
+    });
+    
+    document.getElementById('save-modal-close').addEventListener('click', () => saveModal.classList.add('hidden'));
+    saveModal.addEventListener('click', (e) => { if(e.target === saveModal) saveModal.classList.add('hidden'); });
+    
+    saveNameInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        confirmSaveBtn.click();
+      }
+    });
+    
+    confirmSaveBtn.addEventListener('click', () => {
+      const name = saveNameInput.value.trim() || 'Untitled Score';
+      const inputs = grid.querySelectorAll('input');
+      const scores = Array.from(inputs).map(inp => inp.value || 0);
+      const totalScoreText = document.getElementById('score-value').textContent;
+      
+      const profile = {
+        id: Date.now().toString(),
+        name: name,
+        track: currentTrack,
+        scores: scores,
+        total: totalScoreText
+      };
+      
+      savedProfiles.push(profile);
+      localStorage.setItem('baccasio_saved_profiles', JSON.stringify(savedProfiles));
+      
+      const originalText = confirmSaveBtn.innerHTML;
+      confirmSaveBtn.innerHTML = '✅ Saved!';
+      setTimeout(() => {
+        confirmSaveBtn.innerHTML = originalText;
+        saveModal.classList.add('hidden');
+      }, 1000);
+    });
+  }
 })();

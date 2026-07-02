@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Khmer:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body data-theme="dark">
   <script>
@@ -25,22 +26,31 @@
     })();
   </script>
 
-  <!-- ─── DOT GRID CANVAS ─── -->
-  <canvas id="dot-canvas"></canvas>
+  <!-- ─── NEON BACKGROUND ─── -->
+  <div class="neon-bg"></div>
 
   <!-- ─── TOPBAR ─── -->
   <header class="topbar">
-    <div class="topbar-brand">
-      <h1>BACCA<span>SIO</span></h1>
-      <span class="tag" id="topbar-tag">Bac II</span>
-    </div>
-    <div class="topbar-controls">
-      <button class="topbar-btn" id="lang-toggle" aria-label="Toggle language">
-        <span class="lang-active" id="lang-en-label">EN</span>
-        <span class="lang-sep">|</span>
-        <span id="lang-kh-label">KH</span>
-      </button>
-      <button class="topbar-btn" id="theme-toggle" aria-label="Toggle color theme">☀️</button>
+    <div class="topbar-container">
+      <div class="topbar-brand">
+        <h1>BACCA<span>SIO</span></h1>
+        <span class="tag" id="topbar-tag">Bac II</span>
+      </div>
+      <div class="topbar-controls">
+        <button class="topbar-btn" id="my-scores-btn" aria-label="My Scores" style="gap: 6px; padding: 0 12px; font-weight: 500;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+          <span style="font-size: 0.85rem;" id="my-scores-label">Scores</span>
+        </button>
+        <button class="topbar-btn" id="lang-toggle" aria-label="Toggle language">
+          <span class="lang-active" id="lang-en-label">EN</span>
+          <span class="lang-divider">|</span>
+          <span class="lang-inactive" id="lang-kh-label">KH</span>
+        </button>
+        <button class="topbar-btn" id="theme-toggle" aria-label="Toggle theme">
+          <svg id="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg id="icon-moon" class="hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -110,6 +120,16 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Share Button -->
+      <div class="share-container" id="share-container" style="margin-top: 20px; text-align: center; display: flex; justify-content: center; gap: 12px;">
+        <button class="share-btn" id="save-score-btn">
+          💾 <span id="save-btn-label">Save</span>
+        </button>
+        <button class="share-btn" id="share-btn">
+          📤 <span id="share-btn-label">Share</span>
+        </button>
+      </div>
     </section>
 
     <!-- Grade Table Card -->
@@ -137,10 +157,57 @@
 
   <!-- ─── FOOTER ─── -->
   <footer class="footer">
-    <p id="footer-text">© 2026 BACCASIO — Built for Cambodian students 🇰🇭</p>
+    <p id="footer-text">© 2026 BACCASIO — probablykalvin.com</p>
   </footer>
 
-  <!-- ─── JAVASCRIPT ─── -->
+  <!-- ─── SHARE MODAL ─── -->
+  <div class="modal-overlay hidden" id="share-modal">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+      <div class="modal-body">
+        <div class="modal-preview" id="modal-preview"></div>
+        <div class="modal-actions">
+          <button class="share-btn large" id="modal-copy-btn">
+            📄 <span id="modal-copy-label">Copy Link</span>
+          </button>
+          <button class="share-btn large" id="modal-download-btn">
+            ⬇️ <span id="modal-download-label">Download Image</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SAVE SCORE MODAL ─── -->
+  <div class="modal-overlay hidden" id="save-modal">
+    <div class="modal-content small">
+      <button class="modal-close" id="save-modal-close" aria-label="Close">✕</button>
+      <div class="modal-header">
+        <h3 id="save-modal-title">Save Score Profile</h3>
+      </div>
+      <div class="input-group">
+        <label for="score-name-input" id="score-name-label">Profile Name</label>
+        <input type="text" id="score-name-input" placeholder="e.g. Target Score" maxlength="32">
+      </div>
+      <button class="share-btn large" id="confirm-save-btn" style="width: 100%;">
+        Save Profile
+      </button>
+    </div>
+  </div>
+
+  <!-- ─── MY SCORES MODAL ─── -->
+  <div class="modal-overlay hidden" id="scores-modal">
+    <div class="modal-content small">
+      <button class="modal-close" id="scores-modal-close" aria-label="Close">✕</button>
+      <div class="modal-header">
+        <h3 id="scores-modal-title">My Saved Scores</h3>
+      </div>
+      <div class="saved-scores-list" id="saved-scores-list">
+        <!-- JS injects profiles here -->
+      </div>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>

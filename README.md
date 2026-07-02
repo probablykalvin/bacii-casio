@@ -1,7 +1,6 @@
 # BACCASIO — Cambodian Bac II Grade Calculator
 
-A sleek, bilingual (English & Khmer) single-page calculator for the Cambodian Grade 12 High School National Examination (**Bac II**). Built with a premium, responsive glassmorphic UI and interactive canvas particles.
-
+A sleek calculator for the Cambodian Grade 12 High School National Examination (**Bac II**). 
 ---
 
 ## ✨ Features
