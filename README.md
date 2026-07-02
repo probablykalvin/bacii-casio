@@ -1,14 +1,11 @@
-# BACCASIO — Cambodian Bac II Grade Calculator
+# BACCASIO
 
-A sleek calculator for the Cambodian Grade 12 High School National Examination (**Bac II**). 
----
+A fast and accurate BACII grade calculator. 
 
-## ✨ Features
+👉 **[Try it out here!](https://probablykalvin.github.io/bacii-casio)**
 
-- **Double-Track Calculation**: Supports both **Science** and **Social Science** tracks.
-- **Bilingual Interface**: Seamless instant translation between English and Khmer.
-- **Dynamic UI**: Dark/light theme toggle, score counters, visual grade reveals, and interactive dot-grid canvas background.
-- **Smart Validation**: Checks for empty inputs, negative values, decimals, and track-specific max scores.
-- **Detailed Breakdown**: Shows percentages and score contributions for each subject.
+## Features
 
----
+- **Double-Track Support**: Calculates scores for both Science and Social Science tracks.
+- **Detailed Breakdown**: Displays exact percentages and pass/fail status for each individual subject.
+- **Save & Share**: Save unlimited score profiles locally, share your scores via generated short-links, and download high-resolution report cards.
