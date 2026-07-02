@@ -139,7 +139,7 @@
 
   <!-- ─── FOOTER ─── -->
   <footer class="footer">
-    <p id="footer-text">© 2026 BACCASIO — probablykalvin.com</p>
+    <p id="footer-text">© 2026 BACCASIO — probablykalvin.xyz</p>
   </footer>
 
   <!-- ─── SHARE MODAL ─── -->
@@ -152,6 +152,12 @@
           <button class="share-btn large" id="modal-copy-btn">
             📄 <span id="modal-copy-label">Copy Link</span>
           </button>
+          <div id="link-box-container" style="display: none; align-items: center; gap: 8px; width: 100%; background: var(--bg-input); padding: 8px; border-radius: 8px; border: 1px solid var(--border); box-sizing: border-box;">
+            <input type="text" id="share-link-input" readonly style="flex: 1; border: none; background: transparent; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; outline: none; width: 100%;">
+            <button id="modal-copy-icon-btn" class="share-btn" style="padding: 6px 10px; min-width: auto; height: auto;" aria-label="Copy">
+              📋
+            </button>
+          </div>
           <button class="share-btn large" id="modal-download-btn">
             ⬇️ <span id="modal-download-label">Download Image</span>
           </button>

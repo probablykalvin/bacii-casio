@@ -18,7 +18,7 @@
       thStatus: 'Status',
       pass: 'Pass',
       fail: 'Fail',
-      footer: '© 2026 BACCASIO — probablykalvin.com',
+      footer: '© 2026 BACCASIO — probablykalvin.xyz',
       gradeRequires: (letter, min, max) => `Grade <strong>${letter}</strong> requires <strong>${min}–${max}</strong> points`,
       subjects: {
         science: [
@@ -57,7 +57,9 @@
       scoreNameLabel: 'Profile Name',
       scoreNamePlaceholder: 'e.g. Target Score',
       confirmSaveBtn: 'Save Profile',
-      scoresModalTitle: 'My Saved Scores'
+      scoresModalTitle: 'My Saved Scores',
+      loadingShare: '⏳ Loading...',
+      copiedPopup: 'Link copied to clipboard!'
     },
     kh: {
       tag: 'បាក់ II',
@@ -72,7 +74,7 @@
       thStatus: 'ស្ថានភាព',
       pass: 'ជាប់',
       fail: 'ធ្លាក់',
-      footer: '© ២០២៦ BACCASIO — probablykalvin.com',
+      footer: '© ២០២៦ BACCASIO — probablykalvin.xyz',
       gradeRequires: (letter, min, max) => `កម្រិត <strong>${letter}</strong> ត្រូវការ <strong>${min}–${max}</strong> ពិន្ទុ`,
       subjects: {
         science: [
@@ -111,7 +113,9 @@
       scoreNameLabel: 'ឈ្មោះពិន្ទុប្រឡង',
       scoreNamePlaceholder: 'ឧទាហរណ៍៖ ពិន្ទុគោលដៅ',
       confirmSaveBtn: 'រក្សាទុក',
-      scoresModalTitle: 'ពិន្ទុប្រឡងដែលបានរក្សាទុករបស់ខ្ញុំ'
+      scoresModalTitle: 'ពិន្ទុប្រឡងដែលបានរក្សាទុករបស់ខ្ញុំ',
+      loadingShare: '⏳ កំពុងដំណើរការ...',
+      copiedPopup: 'តំណត្រូវបានចម្លង!'
     }
   };
 
@@ -551,6 +555,42 @@
   const modalCopyBtn = document.getElementById('modal-copy-btn');
   const modalDownloadBtn = document.getElementById('modal-download-btn');
 
+  function showToast(message) {
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.style.position = 'fixed';
+    toast.style.bottom = '24px';
+    toast.style.left = '50%';
+    toast.style.transform = 'translateX(-50%)';
+    toast.style.backgroundColor = 'var(--bg-card)';
+    toast.style.color = 'var(--text-primary)';
+    toast.style.padding = '12px 24px';
+    toast.style.borderRadius = '8px';
+    toast.style.boxShadow = 'var(--shadow)';
+    toast.style.zIndex = '9999';
+    toast.style.border = '1px solid var(--border)';
+    toast.style.fontFamily = 'inherit';
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    
+    document.body.appendChild(toast);
+    
+    requestAnimationFrame(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translate(-50%, -10px)';
+    });
+    
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translate(-50%, 0)';
+      setTimeout(() => {
+        if (document.body.contains(toast)) {
+          document.body.removeChild(toast);
+        }
+      }, 300);
+    }, 3000);
+  }
+
   if (shareBtn && shareModal) {
     shareBtn.addEventListener('click', () => {
       if (typeof html2canvas === 'undefined') {
@@ -559,7 +599,7 @@
       }
       
       const originalText = shareBtn.innerHTML;
-      shareBtn.innerHTML = '⏳ Loading...';
+      shareBtn.innerHTML = t().loadingShare;
       shareBtn.disabled = true;
 
       // Create an off-screen wrapper for the screenshot
@@ -601,7 +641,7 @@
       // Add watermark
       const watermark = document.createElement('div');
       const footerEl = document.getElementById('footer-text');
-      watermark.textContent = footerEl ? footerEl.textContent : '© 2026 BACCASIO — probablykalvin.com';
+      watermark.textContent = footerEl ? footerEl.textContent : '© 2026 BACCASIO — probablykalvin.xyz';
       watermark.style.textAlign = 'center';
       watermark.style.marginTop = '24px';
       watermark.style.fontSize = '0.75rem';
@@ -621,6 +661,11 @@
         const dataUrl = canvas.toDataURL('image/png');
         modalPreview.innerHTML = `<img src="${dataUrl}" alt="Score Card Preview" style="width: 100%; border-radius: 12px; box-shadow: var(--shadow);" />`;
         
+        // Reset copy box state
+        modalCopyBtn.style.display = '';
+        const linkBox = document.getElementById('link-box-container');
+        if (linkBox) linkBox.style.display = 'none';
+
         // Open modal
         shareModal.classList.remove('hidden');
       }).catch(err => {
@@ -653,15 +698,40 @@
       const url = new URL(window.location.href);
       url.search = ''; // Clear other params
       url.searchParams.set('s', encoded);
+      const urlString = url.toString();
       
-      navigator.clipboard.writeText(url.toString()).then(() => {
-        const originalText = modalCopyBtn.innerHTML;
-        modalCopyBtn.innerHTML = '✅ Copied!';
-        setTimeout(() => {
-          modalCopyBtn.innerHTML = originalText;
-        }, 2000);
+      navigator.clipboard.writeText(urlString).then(() => {
+        modalCopyBtn.style.display = 'none';
+        const linkBox = document.getElementById('link-box-container');
+        if (linkBox) {
+          linkBox.style.display = 'flex';
+          const linkInput = document.getElementById('share-link-input');
+          if (linkInput) {
+            linkInput.value = urlString;
+            linkInput.select();
+          }
+        }
+        showToast(t().copiedPopup);
       });
     });
+
+    const modalCopyIconBtn = document.getElementById('modal-copy-icon-btn');
+    if (modalCopyIconBtn) {
+      modalCopyIconBtn.addEventListener('click', () => {
+        const linkInput = document.getElementById('share-link-input');
+        if (linkInput) {
+          linkInput.select();
+          navigator.clipboard.writeText(linkInput.value).then(() => {
+            const originalText = modalCopyIconBtn.innerHTML;
+            modalCopyIconBtn.innerHTML = '✅';
+            setTimeout(() => {
+              modalCopyIconBtn.innerHTML = originalText;
+            }, 2000);
+            showToast(t().copiedPopup);
+          });
+        }
+      });
+    }
 
     modalDownloadBtn.addEventListener('click', () => {
       const img = modalPreview.querySelector('img');
