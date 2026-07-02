@@ -677,7 +677,7 @@
       // Add watermark
       const watermark = document.createElement('div');
       const footerEl = document.getElementById('footer-text');
-      watermark.textContent = footerEl ? footerEl.textContent : '© 2026 BACCASIO — probablykalvin.xyz';
+      watermark.textContent = footerEl ? footerEl.textContent.split('|')[0].trim() : '© 2026 BACCASIO — probablykalvin.xyz';
       watermark.style.textAlign = 'center';
       watermark.style.marginTop = '24px';
       watermark.style.fontSize = '0.75rem';
