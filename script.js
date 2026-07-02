@@ -34,7 +34,7 @@
           'Khmer Literature',
           'History',
           'Geography',
-          'Morality',
+          'Moral and Civic',
           'Mathematics',
           'Foreign Language',
           'Chosen Subject'
