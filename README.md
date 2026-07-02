@@ -11,3 +11,5 @@ A sleek, bilingual (English & Khmer) single-page calculator for the Cambodian Gr
 - **Dynamic UI**: Dark/light theme toggle, score counters, visual grade reveals, and interactive dot-grid canvas background.
 - **Smart Validation**: Checks for empty inputs, negative values, decimals, and track-specific max scores.
 - **Detailed Breakdown**: Shows percentages and score contributions for each subject.
+
+---
