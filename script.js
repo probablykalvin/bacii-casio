@@ -18,7 +18,7 @@
       thStatus: 'Status',
       pass: 'Pass',
       fail: 'Fail',
-      footer: '© 2026 BACCASIO — probablykalvin.xyz',
+      footer: '© 2026 BACCASIO — probablykalvin.xyz | <a href="https://github.com/probablykalvin/bacii-casio" target="_blank" rel="noopener noreferrer">View Source</a>',
       gradeRequires: (letter, min, max) => `Grade <strong>${letter}</strong> requires <strong>${min}–${max}</strong> points`,
       subjects: {
         science: [
@@ -59,7 +59,14 @@
       confirmSaveBtn: 'Save Profile',
       scoresModalTitle: 'My Saved Scores',
       loadingShare: '⏳ Loading...',
-      copiedPopup: 'Link copied to clipboard!'
+      copiedPopup: 'Link copied to clipboard!',
+      countdownTitle: 'Bac II Exam Countdown (August 10, 2026)',
+      countdownSubtitle: 'Counting down to August 10, 2026',
+      countdownDays: 'Days',
+      countdownHours: 'Hours',
+      countdownMinutes: 'Minutes',
+      countdownSeconds: 'Seconds',
+      countdownReached: 'Bac II Exam is here!'
     },
     kh: {
       tag: 'បាក់ II',
@@ -74,7 +81,7 @@
       thStatus: 'ស្ថានភាព',
       pass: 'ជាប់',
       fail: 'ធ្លាក់',
-      footer: '© ២០២៦ BACCASIO — probablykalvin.xyz',
+      footer: '© ២០២៦ BACCASIO — probablykalvin.xyz | <a href="https://github.com/probablykalvin/bacii-casio" target="_blank" rel="noopener noreferrer">View Source</a>',
       gradeRequires: (letter, min, max) => `កម្រិត <strong>${letter}</strong> ត្រូវការ <strong>${min}–${max}</strong> ពិន្ទុ`,
       subjects: {
         science: [
@@ -115,7 +122,14 @@
       confirmSaveBtn: 'រក្សាទុក',
       scoresModalTitle: 'ពិន្ទុប្រឡងដែលបានរក្សាទុករបស់ខ្ញុំ',
       loadingShare: '⏳ កំពុងដំណើរការ...',
-      copiedPopup: 'តំណត្រូវបានចម្លង!'
+      copiedPopup: 'តំណត្រូវបានចម្លង!',
+      countdownTitle: 'ប្រឡងបាក់ឌុប (ថ្ងៃទី១០ សីហា ២០២៦)',
+      countdownSubtitle: 'រាប់ថយក្រោយដល់ថ្ងៃទី១០ សីហា ២០២៦',
+      countdownDays: 'ថ្ងៃ',
+      countdownHours: 'ម៉ោង',
+      countdownMinutes: 'នាទី',
+      countdownSeconds: 'វិនាទី',
+      countdownReached: 'ដល់ថ្ងៃប្រឡងបាក់ឌុបហើយ!'
     }
   };
 
@@ -277,7 +291,7 @@
     document.getElementById('th-grade').textContent = tr.thGrade;
     document.getElementById('th-range').textContent = tr.thRange;
     document.getElementById('th-status').textContent = tr.thStatus;
-    document.getElementById('footer-text').textContent = tr.footer;
+    document.getElementById('footer-text').innerHTML = tr.footer;
 
     // Update table pass/fail badges
     document.querySelectorAll('[data-pass-badge]').forEach(el => { el.textContent = tr.pass; });
@@ -315,6 +329,28 @@
     if (confirmSaveBtn) confirmSaveBtn.textContent = tr.confirmSaveBtn;
     const scoresModalTitle = document.getElementById('scores-modal-title');
     if (scoresModalTitle) scoresModalTitle.textContent = tr.scoresModalTitle;
+
+    // Countdown Translations
+    const cdTitle = document.getElementById('countdown-title');
+    if (cdTitle) cdTitle.textContent = tr.countdownTitle;
+    const cdSubtitle = document.getElementById('countdown-subtitle');
+    if (cdSubtitle) {
+      if (cdSubtitle.textContent !== I18N.en.countdownReached && cdSubtitle.textContent !== I18N.kh.countdownReached) {
+         cdSubtitle.textContent = tr.countdownSubtitle;
+      }
+    }
+    const cdLabelDays = document.getElementById('cd-label-days');
+    if (cdLabelDays) cdLabelDays.textContent = tr.countdownDays;
+    const cdLabelHours = document.getElementById('cd-label-hours');
+    if (cdLabelHours) cdLabelHours.textContent = tr.countdownHours;
+    const cdLabelMinutes = document.getElementById('cd-label-minutes');
+    if (cdLabelMinutes) cdLabelMinutes.textContent = tr.countdownMinutes;
+    const cdLabelSeconds = document.getElementById('cd-label-seconds');
+    if (cdLabelSeconds) cdLabelSeconds.textContent = tr.countdownSeconds;
+
+    if (window.updateCountdownNow) {
+      window.updateCountdownNow();
+    }
 
     // Re-translate the result card if it's visible
     if (lastResult && !resultCard.classList.contains('hidden')) {
@@ -915,4 +951,55 @@
       }, 1000);
     });
   }
+
+  /* ── Countdown Timer Logic ── */
+  function toKhmerNum(numStr) {
+    if (currentLang !== 'kh') return numStr;
+    const khmerDigits = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
+    return String(numStr).replace(/\d/g, d => khmerDigits[d]);
+  }
+
+  function initCountdown() {
+    // Target date: August 10, 2026 (assumed Cambodia time, UTC+7)
+    const targetDate = new Date('2026-08-10T00:00:00+07:00').getTime();
+    
+    const elDays = document.getElementById('cd-days');
+    const elHours = document.getElementById('cd-hours');
+    const elMinutes = document.getElementById('cd-minutes');
+    const elSeconds = document.getElementById('cd-seconds');
+
+    if(!elDays) return;
+
+    function update() {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      if (distance < 0) {
+        elDays.textContent = toKhmerNum("00");
+        elHours.textContent = toKhmerNum("00");
+        elMinutes.textContent = toKhmerNum("00");
+        elSeconds.textContent = toKhmerNum("00");
+        const subtitle = document.getElementById('countdown-subtitle');
+        if (subtitle) subtitle.textContent = t().countdownReached;
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      elDays.textContent = toKhmerNum(days.toString().padStart(2, '0'));
+      elHours.textContent = toKhmerNum(hours.toString().padStart(2, '0'));
+      elMinutes.textContent = toKhmerNum(minutes.toString().padStart(2, '0'));
+      elSeconds.textContent = toKhmerNum(seconds.toString().padStart(2, '0'));
+    }
+
+    update();
+    window.updateCountdownNow = update;
+    setInterval(update, 1000);
+  }
+
+  initCountdown();
+
 })();
