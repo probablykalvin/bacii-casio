@@ -747,7 +747,6 @@ main {
   text-decoration: none;
 }
 
-/* ───────────── RESPONSIVE ───────────── */
 @media (max-width: 600px) {
   .hero h2 { font-size: 2rem; }
 
@@ -757,13 +756,46 @@ main {
     max-width: 100%;
   }
 
-  .card { padding: 20px; }
-  main { padding: 20px 16px 60px; }
+  .card { padding: 16px; }
+  main { padding: 16px 12px 60px; }
   .topbar { padding: 12px 16px; }
 
   .modal-body {
     flex-direction: column;
     gap: 16px;
+  }
+
+  /* Fluid scaling to keep layout intact on small screens */
+  .card-header {
+    flex-wrap: nowrap;
+    gap: clamp(4px, 2vw, 12px);
+  }
+  .card-header h3 {
+    font-size: clamp(0.8rem, 3.5vw, 1rem);
+  }
+  .track-btn {
+    padding: clamp(4px, 1.5vw, 6px) clamp(8px, 2.5vw, 14px);
+    font-size: clamp(0.65rem, 2.5vw, 0.75rem);
+  }
+  
+  .result-inner {
+    gap: clamp(12px, 4vw, 28px);
+  }
+  .grade-letter {
+    font-size: clamp(3.5rem, 15vw, 5.5rem);
+  }
+  .score-value {
+    font-size: clamp(1.4rem, 6vw, 2rem);
+  }
+  .percentage-text, .grade-range-text {
+    font-size: clamp(0.7rem, 2.5vw, 0.95rem);
+  }
+  .share-container {
+    gap: clamp(6px, 2vw, 12px) !important;
+  }
+  .share-btn {
+    padding: clamp(8px, 2vw, 10px) clamp(12px, 3vw, 20px);
+    font-size: clamp(0.75rem, 2.5vw, 0.85rem);
   }
 }
 
