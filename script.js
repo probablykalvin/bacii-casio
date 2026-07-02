@@ -142,10 +142,8 @@
   const gradeRangeText = document.getElementById('grade-range-text');
   const gradeTable = document.getElementById('grade-table');
   const sparkleContainer = document.getElementById('sparkle-container');
-  const themeToggle = document.getElementById('theme-toggle');
   const langToggle = document.getElementById('lang-toggle');
-  const langEnLabel = document.getElementById('lang-en-label');
-  const langKhLabel = document.getElementById('lang-kh-label');
+  const currentLangLabel = document.getElementById('current-lang-label');
 
   let currentTrack = 'science';
   let lastResult = null; // stores { total, grade, pct } for language re-translation
@@ -242,19 +240,7 @@
     });
   });
 
-  /* ── Theme toggle ── */
-  function setTheme(theme) {
-    document.body.setAttribute('data-theme', theme);
-    themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
-    try { localStorage.setItem('baccasio-theme', theme); } catch (e) {}
-  }
-
-  themeToggle.addEventListener('click', () => {
-    const current = document.body.getAttribute('data-theme');
-    setTheme(current === 'dark' ? 'light' : 'dark');
-  });
-
-  setTheme(document.body.getAttribute('data-theme') || 'dark');
+  /* ── Theme logic removed (dark theme permanent) ── */
 
   /* ── Language toggle ── */
   function applyLanguage() {
@@ -275,9 +261,10 @@
     document.querySelectorAll('[data-pass-badge]').forEach(el => { el.textContent = tr.pass; });
     document.querySelectorAll('[data-fail-badge]').forEach(el => { el.textContent = tr.fail; });
 
-    // Update language toggle highlighting
-    langEnLabel.classList.toggle('lang-active', currentLang === 'en');
-    langKhLabel.classList.toggle('lang-active', currentLang === 'kh');
+    // Update language toggle text
+    if (currentLangLabel) {
+      currentLangLabel.textContent = currentLang.toUpperCase();
+    }
 
     // Rebuild subjects with translated names
     buildSubjects(currentTrack);
