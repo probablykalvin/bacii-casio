@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compare Scores — BACCASIO</title>
+  <meta name="description" content="Compare your saved Bac II exam score profiles with detailed charts and analytics on BACCASIO." />
+  <meta property="og:title" content="Compare Scores — BACCASIO" />
+  <meta property="og:description" content="Analyze and compare your Cambodian Bac II exam score profiles." />
+  <meta name="theme-color" content="#5865F2" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Khmer:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="../compare.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <link rel="icon" type="image/jpg" href="../favicon.jpg" />
+</head>
+<body data-theme="dark">
+  <!-- ─── NEON BACKGROUND ─── -->
+  <div class="neon-bg"></div>
+
+  <!-- ─── TOPBAR ─── -->
+  <header class="topbar">
+    <div class="topbar-container">
+      <div class="topbar-brand">
+        <a href="../" class="topbar-btn" id="back-link" style="text-decoration: none; margin-right: 12px; font-weight: bold; width: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">←</a>
+        <h1>BACCA<span>SIO</span></h1>
+        <span class="tag" id="topbar-tag">Compare</span>
+      </div>
+      <div class="topbar-controls">
+        <button class="topbar-btn" id="lang-toggle" aria-label="Toggle language">
+          <span id="current-lang-label">EN</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── MAIN ─── -->
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <h2>Compare <span class="accent">Scores</span></h2>
+      <p id="compare-desc">Analyze and compare your saved score profiles</p>
+    </section>
+
+    <!-- Track Selector Card -->
+    <div class="card hidden" id="track-selector-section" style="margin-bottom: 24px; padding: 16px 28px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <h4 id="track-selector-title" style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); margin: 0;">Select Track</h4>
+        <div class="track-toggle" role="group" aria-label="Track selection">
+          <button class="track-btn active" data-track="science" id="compare-track-science">Science</button>
+          <button class="track-btn" data-track="social" id="compare-track-social">Social Science</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <section class="card empty-compare-state hidden" id="empty-state">
+      <div style="text-align: center; padding: 40px 20px;">
+        <div style="font-size: 3rem; margin-bottom: 16px;">📊</div>
+        <h3 id="empty-title" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">No Profiles to Compare</h3>
+        <p id="empty-desc" style="color: var(--text-secondary); margin-top: 8px; font-size: 0.9rem;">Save at least 2 score profiles to start comparing.</p>
+        <a href="../index.html" class="share-btn large" style="display: inline-flex; margin-top: 20px; text-decoration: none;">← Go Back</a>
+      </div>
+    </section>
+
+    <!-- All Profiles — Line Chart -->
+    <section class="card hidden" id="overview-section">
+      <h3><span class="icon">📈</span> <span id="overview-title">Score Progress</span></h3>
+      <div class="chart-container">
+        <canvas id="line-chart"></canvas>
+      </div>
+    </section>
+
+    <!-- Profile Selector -->
+    <section class="card hidden" id="selector-section">
+      <h3><span class="icon">🔀</span> <span id="selector-title">Compare Two Profiles</span></h3>
+      <div class="profile-selector">
+        <div class="select-group">
+          <label for="profile-a-select" id="profile-a-label">Profile A</label>
+          <select id="profile-a-select" class="profile-select"></select>
+        </div>
+        <div class="vs-badge">VS</div>
+        <div class="select-group">
+          <label for="profile-b-select" id="profile-b-label">Profile B</label>
+          <select id="profile-b-select" class="profile-select"></select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Insight Cards -->
+    <section class="insight-cards hidden" id="insight-section">
+      <div class="card insight-card improvement" id="improvement-card">
+        <div class="insight-icon">📈</div>
+        <div class="insight-content">
+          <div class="insight-label" id="improvement-label">Biggest Improvement</div>
+          <div class="insight-subject" id="improvement-subject">—</div>
+          <div class="insight-value positive" id="improvement-value">—</div>
+        </div>
+      </div>
+      <div class="card insight-card attention" id="attention-card">
+        <div class="insight-icon">⚠️</div>
+        <div class="insight-content">
+          <div class="insight-label" id="attention-label">Needs Attention</div>
+          <div class="insight-subject" id="attention-subject">—</div>
+          <div class="insight-value negative" id="attention-value">—</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts Grid (Radar + Bar) -->
+    <div class="charts-grid hidden" id="charts-section">
+      <section class="card">
+        <h3><span class="icon">🕸️</span> <span id="radar-title">Strengths vs Weaknesses</span></h3>
+        <div class="chart-container radar-container">
+          <canvas id="radar-chart"></canvas>
+        </div>
+      </section>
+      <section class="card">
+        <h3><span class="icon">📊</span> <span id="bar-title">Direct Match-Up</span></h3>
+        <div class="chart-container">
+          <canvas id="bar-chart"></canvas>
+        </div>
+      </section>
+    </div>
+
+    <!-- Data Table -->
+    <section class="card hidden" id="table-section">
+      <h3><span class="icon">📋</span> <span id="table-title-text">Score Comparison</span></h3>
+      <div class="table-wrapper">
+        <table class="grade-table compare-table" id="compare-table">
+          <thead>
+            <tr>
+              <th id="th-comp-subject">Subject</th>
+              <th id="th-comp-profile-a">Profile A</th>
+              <th id="th-comp-profile-b">Profile B</th>
+              <th id="th-comp-diff">Difference</th>
+            </tr>
+          </thead>
+          <tbody id="compare-tbody">
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- ─── FOOTER ─── -->
+  <footer class="footer">
+    <p id="footer-text">© 2026 BACCASIO — probablykalvin.xyz | <a href="https://github.com/probablykalvin/bacii-casio" target="_blank" rel="noopener noreferrer">View Source</a></p>
+  </footer>
+
+  <script src="../compare.js"></script>
+</body>
+</html>

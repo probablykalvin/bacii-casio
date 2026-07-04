@@ -219,8 +219,9 @@
   <div class="modal-overlay hidden" id="scores-modal">
     <div class="modal-content small">
       <button class="modal-close" id="scores-modal-close" aria-label="Close">✕</button>
-      <div class="modal-header">
-        <h3 id="scores-modal-title">My Saved Scores</h3>
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h3 id="scores-modal-title" style="margin-bottom: 0;">My Saved Scores</h3>
+        <a href="compare/" class="share-btn" id="compare-btn" style="text-decoration: none; padding: 6px 12px; font-size: 0.8rem; border-radius: 8px;">📊 <span id="compare-btn-label">Compare</span></a>
       </div>
       <div class="saved-scores-list" id="saved-scores-list">
         <!-- JS injects profiles here -->

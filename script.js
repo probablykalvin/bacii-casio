@@ -63,6 +63,7 @@
       scorecardNameLabel: 'Score Card Name',
       scorecardNamePlaceholder: 'e.g. My Bac II Score',
       scorecardNameHint: 'Leave blank to hide the name on the card',
+      compareBtn: 'Compare',
       countdownTitle: 'Bac II Exam Countdown (August 10, 2026)',
       countdownSubtitle: 'Counting down to August 10, 2026',
       countdownDays: 'Days',
@@ -129,6 +130,7 @@
       scorecardNameLabel: 'ឈ្មោះកាតពិន្ទុ',
       scorecardNamePlaceholder: 'ឧទាហរណ៍៖ ពិន្ទុបាក់ឌុបរបស់ខ្ញុំ',
       scorecardNameHint: 'ទុកទទេដើម្បីលាក់ឈ្មោះលើកាត',
+      compareBtn: 'ប្រៀបធៀប',
       countdownTitle: 'ប្រឡងបាក់ឌុប (ថ្ងៃទី១០ សីហា ២០២៦)',
       countdownSubtitle: 'រាប់ថយក្រោយដល់ថ្ងៃទី១០ សីហា ២០២៦',
       countdownDays: 'ថ្ងៃ',
@@ -344,6 +346,10 @@
     if (scorecardNameInput) scorecardNameInput.placeholder = tr.scorecardNamePlaceholder;
     const scorecardNameHint = document.getElementById('scorecard-name-hint');
     if (scorecardNameHint) scorecardNameHint.textContent = tr.scorecardNameHint;
+
+    // Compare button
+    const compareBtnLabel = document.getElementById('compare-btn-label');
+    if (compareBtnLabel) compareBtnLabel.textContent = tr.compareBtn;
 
     // Countdown Translations
     const cdTitle = document.getElementById('countdown-title');
@@ -928,48 +934,66 @@
       return;
     }
     scoresList.innerHTML = '';
-    savedProfiles.forEach(profile => {
-      const item = document.createElement('div');
-      item.className = 'saved-score-item';
-      const trackName = profile.track === 'science' ? 'Science' : 'Social Science';
-      item.innerHTML = `
-        <div class="saved-score-info">
-          <div class="saved-score-name">${escapeHTML(profile.name)}</div>
-          <div class="saved-score-details">${trackName} • ${profile.total} pts</div>
-        </div>
-        <div class="saved-score-actions">
-          <button class="btn-delete" aria-label="Delete">🗑️</button>
-        </div>
-      `;
-      item.addEventListener('click', (e) => {
-        if (e.target.closest('.btn-delete')) return;
-        
-        // Set the scorecard name from the loaded profile name
-        currentScorecardName = profile.name || '';
-        
-        const trackBtn = document.querySelector(`.track-btn[data-track="${profile.track}"]`);
-        if (trackBtn) trackBtn.click();
-        
-        const inputs = grid.querySelectorAll('input');
-        inputs.forEach((inp, i) => {
-          inp.value = profile.scores[i] !== undefined ? profile.scores[i] : '';
-        });
-        
-        scoresModal.classList.add('hidden');
-        setTimeout(calculate, 100);
-      });
 
-      const deleteBtn = item.querySelector('.btn-delete');
-      deleteBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (confirm('Delete this saved score?')) {
-          savedProfiles = savedProfiles.filter(p => p.id !== profile.id);
-          localStorage.setItem('baccasio_saved_profiles', JSON.stringify(savedProfiles));
-          renderSavedScores();
-        }
+    const scienceProfiles = savedProfiles.filter(p => p.track === 'science');
+    const socialProfiles = savedProfiles.filter(p => p.track === 'social');
+
+    function renderGroup(profilesGroup, titleText) {
+      if (profilesGroup.length === 0) return;
+
+      const groupHeader = document.createElement('div');
+      groupHeader.className = 'saved-scores-group-header';
+      groupHeader.style.cssText = 'font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin: 16px 0 8px 4px;';
+      groupHeader.textContent = titleText;
+      scoresList.appendChild(groupHeader);
+
+      profilesGroup.forEach(profile => {
+        const item = document.createElement('div');
+        item.className = 'saved-score-item';
+        const trackName = profile.track === 'science' ? 'Science' : 'Social Science';
+        item.innerHTML = `
+          <div class="saved-score-info">
+            <div class="saved-score-name">${escapeHTML(profile.name)}</div>
+            <div class="saved-score-details">${trackName} • ${profile.total} pts</div>
+          </div>
+          <div class="saved-score-actions">
+            <button class="btn-delete" aria-label="Delete">🗑️</button>
+          </div>
+        `;
+        item.addEventListener('click', (e) => {
+          if (e.target.closest('.btn-delete')) return;
+
+          // Set the scorecard name from the loaded profile name
+          currentScorecardName = profile.name || '';
+
+          const trackBtn = document.querySelector(`.track-btn[data-track="${profile.track}"]`);
+          if (trackBtn) trackBtn.click();
+
+          const inputs = grid.querySelectorAll('input');
+          inputs.forEach((inp, i) => {
+            inp.value = profile.scores[i] !== undefined ? profile.scores[i] : '';
+          });
+
+          scoresModal.classList.add('hidden');
+          setTimeout(calculate, 100);
+        });
+
+        const deleteBtn = item.querySelector('.btn-delete');
+        deleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (confirm('Delete this saved score?')) {
+            savedProfiles = savedProfiles.filter(p => p.id !== profile.id);
+            localStorage.setItem('baccasio_saved_profiles', JSON.stringify(savedProfiles));
+            renderSavedScores();
+          }
+        });
+        scoresList.appendChild(item);
       });
-      scoresList.appendChild(item);
-    });
+    }
+
+    const isKh = currentLang === 'kh';
+    renderGroup(scienceProfiles, isKh ? 'ផ្នែកវិទ្យាសាស្ត្រ (Science)' : 'Science Track');
+    renderGroup(socialProfiles, isKh ? 'ផ្នែកវិទ្យាសាស្ត្រសង្គម (Social Science)' : 'Social Science Track');
   }
 
   if (myScoresBtn && scoresModal) {
@@ -1073,5 +1097,16 @@
   }
 
   initCountdown();
+
+  // Local protocol handling for compare link
+  const compareBtn = document.getElementById('compare-btn');
+  if (compareBtn) {
+    compareBtn.addEventListener('click', (e) => {
+      if (window.location.protocol === 'file:') {
+        e.preventDefault();
+        window.location.href = 'compare/index.html';
+      }
+    });
+  }
 
 })();

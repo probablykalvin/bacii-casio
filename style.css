@@ -1119,3 +1119,9 @@ main {
   .time-box { min-width: 50px; }
   .time-colon { font-size: 1.2rem; }
 }
+
+/* Global utility */
+.hidden {
+  display: none !important;
+}
+
