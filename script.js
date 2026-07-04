@@ -60,6 +60,9 @@
       scoresModalTitle: 'My Saved Scores',
       loadingShare: '⏳ Loading...',
       copiedPopup: 'Link copied to clipboard!',
+      scorecardNameLabel: 'Score Card Name',
+      scorecardNamePlaceholder: 'e.g. My Bac II Score',
+      scorecardNameHint: 'Leave blank to hide the name on the card',
       countdownTitle: 'Bac II Exam Countdown (August 10, 2026)',
       countdownSubtitle: 'Counting down to August 10, 2026',
       countdownDays: 'Days',
@@ -123,6 +126,9 @@
       scoresModalTitle: 'ពិន្ទុប្រឡងដែលបានរក្សាទុករបស់ខ្ញុំ',
       loadingShare: '⏳ កំពុងដំណើរការ...',
       copiedPopup: 'តំណត្រូវបានចម្លង!',
+      scorecardNameLabel: 'ឈ្មោះកាតពិន្ទុ',
+      scorecardNamePlaceholder: 'ឧទាហរណ៍៖ ពិន្ទុបាក់ឌុបរបស់ខ្ញុំ',
+      scorecardNameHint: 'ទុកទទេដើម្បីលាក់ឈ្មោះលើកាត',
       countdownTitle: 'ប្រឡងបាក់ឌុប (ថ្ងៃទី១០ សីហា ២០២៦)',
       countdownSubtitle: 'រាប់ថយក្រោយដល់ថ្ងៃទី១០ សីហា ២០២៦',
       countdownDays: 'ថ្ងៃ',
@@ -183,6 +189,7 @@
 
   let currentTrack = 'science';
   let lastResult = null; // stores { total, grade, pct } for language re-translation
+  let currentScorecardName = ''; // stores the current scorecard name (set from saved profile or share modal)
 
   /* ── Build subject inputs ── */
   function buildSubjects(track) {
@@ -329,6 +336,14 @@
     if (confirmSaveBtn) confirmSaveBtn.textContent = tr.confirmSaveBtn;
     const scoresModalTitle = document.getElementById('scores-modal-title');
     if (scoresModalTitle) scoresModalTitle.textContent = tr.scoresModalTitle;
+
+    // Scorecard name translations
+    const scorecardNameLabel = document.getElementById('scorecard-name-label');
+    if (scorecardNameLabel) scorecardNameLabel.textContent = tr.scorecardNameLabel;
+    const scorecardNameInput = document.getElementById('scorecard-name-input');
+    if (scorecardNameInput) scorecardNameInput.placeholder = tr.scorecardNamePlaceholder;
+    const scorecardNameHint = document.getElementById('scorecard-name-hint');
+    if (scorecardNameHint) scorecardNameHint.textContent = tr.scorecardNameHint;
 
     // Countdown Translations
     const cdTitle = document.getElementById('countdown-title');
@@ -628,12 +643,16 @@
   }
 
   if (shareBtn && shareModal) {
-    shareBtn.addEventListener('click', () => {
+    const scorecardNameInput = document.getElementById('scorecard-name-input');
+
+    function generateShareImage() {
       if (typeof html2canvas === 'undefined') {
         alert('Image generation library not loaded.');
         return;
       }
       
+      const scorecardName = scorecardNameInput ? scorecardNameInput.value.trim() : '';
+
       const originalText = shareBtn.innerHTML;
       shareBtn.innerHTML = t().loadingShare;
       shareBtn.disabled = true;
@@ -666,9 +685,15 @@
       const headerLogo = document.createElement('div');
       headerLogo.style.textAlign = 'center';
       headerLogo.style.marginBottom = '24px';
+      
+      // Build header HTML: show scorecard name in the "by" line if provided, otherwise hide it
+      let byLineHtml = '';
+      if (scorecardName) {
+        byLineHtml = `<p style="font-family: 'Inter', 'Noto Sans Khmer', sans-serif; font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); margin: 6px 0 0 0;">${escapeHTML(scorecardName)}</p>`;
+      }
       headerLogo.innerHTML = `
         <h2 style="font-family: 'Inter', sans-serif; font-size: 2rem; font-weight: 900; letter-spacing: -.04em; margin: 0; color: var(--text-primary);">BACCA<span style="color: var(--accent);">SIO</span></h2>
-        <p style="font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); margin: 6px 0 0 0;">by probablykalvin (Reach)</p>
+        ${byLineHtml}
       `;
       wrapper.appendChild(headerLogo);
       
@@ -701,9 +726,6 @@
         modalCopyBtn.style.display = '';
         const linkBox = document.getElementById('link-box-container');
         if (linkBox) linkBox.style.display = 'none';
-
-        // Open modal
-        shareModal.classList.remove('hidden');
       }).catch(err => {
         console.error('Failed to generate image', err);
         if (document.body.contains(wrapper)) document.body.removeChild(wrapper);
@@ -711,7 +733,39 @@
         shareBtn.disabled = false;
         alert('Could not generate preview.');
       });
+    }
+
+    shareBtn.addEventListener('click', () => {
+      // Pre-fill the scorecard name from current profile name
+      if (scorecardNameInput) {
+        scorecardNameInput.value = currentScorecardName || '';
+      }
+      
+      // Clear any previous preview
+      modalPreview.innerHTML = '';
+      
+      // Reset copy box state
+      modalCopyBtn.style.display = '';
+      const linkBox = document.getElementById('link-box-container');
+      if (linkBox) linkBox.style.display = 'none';
+
+      // Open modal first so user can set name
+      shareModal.classList.remove('hidden');
+      
+      // Generate initial preview
+      generateShareImage();
     });
+
+    // Re-generate preview when scorecard name changes
+    if (scorecardNameInput) {
+      let nameDebounce = null;
+      scorecardNameInput.addEventListener('input', () => {
+        clearTimeout(nameDebounce);
+        nameDebounce = setTimeout(() => {
+          generateShareImage();
+        }, 400);
+      });
+    }
 
     modalClose.addEventListener('click', () => {
       shareModal.classList.add('hidden');
@@ -728,8 +782,13 @@
       const inputs = grid.querySelectorAll('input');
       const scores = Array.from(inputs).map(inp => inp.value || 0).join('-');
       const prefix = currentTrack === 'science' ? 'sci' : 'soc';
-      const payload = prefix + '-' + scores;
-      const encoded = btoa(payload).replace(/=/g, ''); // Short, clean base64 string
+      const scorecardName = scorecardNameInput ? scorecardNameInput.value.trim() : '';
+      // Include the name in the payload: prefix-scores|name
+      let payload = prefix + '-' + scores;
+      if (scorecardName) {
+        payload += '|' + scorecardName;
+      }
+      const encoded = btoa(unescape(encodeURIComponent(payload))).replace(/=/g, ''); // Support unicode names
       
       const url = new URL(window.location.href);
       url.search = ''; // Clear other params
@@ -773,7 +832,10 @@
       const img = modalPreview.querySelector('img');
       if (img) {
         const link = document.createElement('a');
-        link.download = `baccasio-score-${Date.now()}.png`;
+        const scorecardName = scorecardNameInput ? scorecardNameInput.value.trim() : '';
+        // Use scorecard name in filename if provided
+        const namePart = scorecardName ? scorecardName.replace(/[^a-zA-Z0-9\u0080-\uFFFF _-]/g, '').replace(/\s+/g, '-').toLowerCase() : Date.now();
+        link.download = `baccasio-${namePart}.png`;
         link.href = img.src;
         link.click();
       }
@@ -796,8 +858,15 @@
       try {
         let b64 = sParam;
         while (b64.length % 4 > 0) b64 += '=';
-        const decoded = atob(b64);
-        const parts = decoded.split('-');
+        const decoded = decodeURIComponent(escape(atob(b64))); // Support unicode names
+        // Check for name separator '|'
+        let mainPart = decoded;
+        if (decoded.includes('|')) {
+          const pipeIdx = decoded.indexOf('|');
+          mainPart = decoded.substring(0, pipeIdx);
+          currentScorecardName = decoded.substring(pipeIdx + 1);
+        }
+        const parts = mainPart.split('-');
         if (parts.length >= 8) {
           sharedTrack = parts[0] === 'soc' ? 'social' : 'science';
           scoreArr = parts.slice(1);
@@ -874,6 +943,9 @@
       `;
       item.addEventListener('click', (e) => {
         if (e.target.closest('.btn-delete')) return;
+        
+        // Set the scorecard name from the loaded profile name
+        currentScorecardName = profile.name || '';
         
         const trackBtn = document.querySelector(`.track-btn[data-track="${profile.track}"]`);
         if (trackBtn) trackBtn.click();
