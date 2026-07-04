@@ -90,19 +90,21 @@
         <h4 style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
           <span>📊</span> <span id="breakdown-title-text">Detailed Breakdown</span>
         </h4>
-        <table class="grade-table" id="breakdown-table">
-          <thead>
-            <tr>
-              <th id="th-breakdown-subject">Subject</th>
-              <th id="th-breakdown-score">Score</th>
-              <th id="th-breakdown-pct">Percentage</th>
-              <th id="th-breakdown-grade">Grade</th>
-            </tr>
-          </thead>
-          <tbody id="breakdown-tbody">
-            <!-- Populated by JS -->
-          </tbody>
-        </table>
+        <div style="overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; margin: 0 -16px; padding: 0 16px; box-sizing: border-box; display: block; max-width: calc(100% + 32px);">
+          <table class="grade-table" id="breakdown-table" style="min-width: 320px;">
+            <thead>
+              <tr>
+                <th id="th-breakdown-subject">Subject</th>
+                <th id="th-breakdown-score">Score</th>
+                <th id="th-breakdown-pct">Percentage</th>
+                <th id="th-breakdown-grade">Grade</th>
+              </tr>
+            </thead>
+            <tbody id="breakdown-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- Share Button -->

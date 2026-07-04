@@ -294,6 +294,30 @@
   box-shadow: 0 4px 12px var(--accent-glow);
 }
 
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .profile-selector {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .select-group {
+    max-width: 100%;
+  }
+  .vs-badge {
+    text-align: center;
+    padding-bottom: 0;
+  }
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+  .insight-cards {
+    grid-template-columns: 1fr;
+  }
+  .compare-table {
+    min-width: 340px;
+  }
+}
+
 
 /* Grade Badge */
 .grade-badge {
