@@ -319,6 +319,10 @@
     document.getElementById('th-breakdown-subject').textContent = tr.thBreakdownSubject;
     document.getElementById('th-breakdown-score').textContent = tr.thBreakdownScore;
     document.getElementById('th-breakdown-pct').textContent = tr.thBreakdownPct;
+    const thBreakdownGrade = document.getElementById('th-breakdown-grade');
+    if (thBreakdownGrade) {
+      thBreakdownGrade.textContent = currentLang === 'kh' ? 'និទ្ទេស' : 'Grade';
+    }
 
     const saveBtnLabel = document.getElementById('save-btn-label');
     if (saveBtnLabel) saveBtnLabel.textContent = tr.saveBtn;
@@ -448,6 +452,25 @@
     setTimeout(() => { sparkleContainer.innerHTML = ''; }, 1500);
   }
 
+  const GRADE_COLORS = {
+    A: { text: 'var(--grade-a)', bg: 'rgba(72, 199, 142, 0.12)' },
+    B: { text: 'var(--grade-b)', bg: 'rgba(88, 101, 242, 0.12)' },
+    C: { text: 'var(--grade-c)', bg: 'rgba(254, 231, 92, 0.12)' },
+    D: { text: 'var(--grade-d)', bg: 'rgba(250, 166, 26, 0.12)' },
+    E: { text: 'var(--grade-e)', bg: 'rgba(244, 123, 103, 0.12)' },
+    F: { text: 'var(--grade-f)', bg: 'rgba(237, 66, 69, 0.12)' }
+  };
+
+  function getSubjectGradeLetter(score, max) {
+    const pct = (score / max) * 100;
+    if (pct >= 90) return 'A';
+    if (pct >= 80) return 'B';
+    if (pct >= 70) return 'C';
+    if (pct >= 60) return 'D';
+    if (pct >= 50) return 'E';
+    return 'F';
+  }
+
   /* ── Detailed Breakdown Table Builder ── */
   function buildBreakdownTable() {
     const tr = t();
@@ -472,6 +495,9 @@
         badgeClass = 'badge-fail';
       }
 
+      const gradeLetter = getSubjectGradeLetter(scoreVal, maxVal);
+      const colors = GRADE_COLORS[gradeLetter];
+
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${name}</td>
@@ -480,6 +506,9 @@
         </td>
         <td>
           <span class="${badgeClass}" style="display: inline-block; min-width: 45px; text-align: center;">${subPct}%</span>
+        </td>
+        <td>
+          <span class="grade-badge" style="background: ${colors.bg}; color: ${colors.text}; margin-left: 0;">${gradeLetter}</span>
         </td>
       `;
       tbody.appendChild(row);
@@ -992,8 +1021,8 @@
     }
 
     const isKh = currentLang === 'kh';
-    renderGroup(scienceProfiles, isKh ? 'ផ្នែកវិទ្យាសាស្ត្រ (Science)' : 'Science Track');
-    renderGroup(socialProfiles, isKh ? 'ផ្នែកវិទ្យាសាស្ត្រសង្គម (Social Science)' : 'Social Science Track');
+    renderGroup(scienceProfiles, isKh ? 'ផ្នែកវិទ្យាសាស្ត្រ (Science)' : 'Science');
+    renderGroup(socialProfiles, isKh ? 'ផ្នែកវិទ្យាសាស្ត្រសង្គម (Social Science)' : 'Social Science');
   }
 
   if (myScoresBtn && scoresModal) {

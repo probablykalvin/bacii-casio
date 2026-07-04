@@ -11,8 +11,8 @@
       heroDesc: 'Analyze and compare your saved score profiles',
       overviewTitle: 'Score Progress',
       selectorTitle: 'Compare Two Profiles',
-      profileALabel: 'Profile A',
-      profileBLabel: 'Profile B',
+      profileALabel: 'First Profile',
+      profileBLabel: 'Second Profile',
       improvementLabel: 'Biggest Improvement',
       attentionLabel: 'Needs Attention',
       radarTitle: 'Strengths vs Weaknesses',
@@ -34,12 +34,12 @@
       heroDesc: 'វិភាគ និងប្រៀបធៀបពិន្ទុដែលបានរក្សាទុក',
       overviewTitle: 'វឌ្ឍនភាពពិន្ទុ',
       selectorTitle: 'ប្រៀបធៀបពិន្ទុពីរ',
-      profileALabel: 'ពិន្ទុ A',
-      profileBLabel: 'ពិន្ទុ B',
-      improvementLabel: 'ការកើនឡើងច្រើនបំផុត',
+      profileALabel: 'ប្រវត្តិពិន្ទុទីមួយ',
+      profileBLabel: 'ប្រវត្តិពិន្ទុទីពីរ',
+      improvementLabel: 'ចំណុចល្អ',
       attentionLabel: 'ត្រូវការយកចិត្តទុកដាក់',
       radarTitle: 'ចំណុចខ្លាំង និង ចំណុចខ្សោយ',
-      barTitle: 'ការប្រៀបធៀបផ្ទាល់',
+      barTitle: 'ការប្រៀបធៀបតាមមុខវិជ្ជានីមួយៗ',
       tableTitle: 'តារាងប្រៀបធៀបពិន្ទុ',
       thSubject: 'មុខវិជ្ជា',
       thDiff: 'ភាពខុសគ្នា',
@@ -62,11 +62,29 @@
   function t() { return I18N[currentLang]; }
 
   /* ═══════════════════════════════════════════
-     SUBJECT DATA
+     SUBJECT DATA & THRESHOLDS
      ═══════════════════════════════════════════ */
   const SUBJECT_MAX = {
     science: [125, 75, 75, 75, 75, 50, 50],
     social:  [125, 75, 75, 75, 75, 50, 75]
+  };
+
+  const GRADES = [
+    { letter: 'A', min: 427, max: 500, color: 'var(--grade-a)' },
+    { letter: 'B', min: 380, max: 426, color: 'var(--grade-b)' },
+    { letter: 'C', min: 332, max: 379, color: 'var(--grade-c)' },
+    { letter: 'D', min: 285, max: 331, color: 'var(--grade-d)' },
+    { letter: 'E', min: 237, max: 284, color: 'var(--grade-e)' },
+    { letter: 'F', min: 0,   max: 236, color: 'var(--grade-f)' }
+  ];
+
+  const GRADE_COLORS = {
+    A: { text: 'var(--grade-a)', bg: 'rgba(72, 199, 142, 0.12)' },
+    B: { text: 'var(--grade-b)', bg: 'rgba(88, 101, 242, 0.12)' },
+    C: { text: 'var(--grade-c)', bg: 'rgba(254, 231, 92, 0.12)' },
+    D: { text: 'var(--grade-d)', bg: 'rgba(250, 166, 26, 0.12)' },
+    E: { text: 'var(--grade-e)', bg: 'rgba(244, 123, 103, 0.12)' },
+    F: { text: 'var(--grade-f)', bg: 'rgba(237, 66, 69, 0.12)' }
   };
 
   /* ═══════════════════════════════════════════
@@ -140,6 +158,25 @@
     return profiles.filter(p => p.track === currentCompareTrack);
   }
 
+  /* ── Subject-level grade calculator ── */
+  function getSubjectGrade(score, max) {
+    const pct = (score / max) * 100;
+    if (pct >= 90) return { letter: 'A', color: 'var(--grade-a)' };
+    if (pct >= 80) return { letter: 'B', color: 'var(--grade-b)' };
+    if (pct >= 70) return { letter: 'C', color: 'var(--grade-c)' };
+    if (pct >= 60) return { letter: 'D', color: 'var(--grade-d)' };
+    if (pct >= 50) return { letter: 'E', color: 'var(--grade-e)' };
+    return { letter: 'F', color: 'var(--grade-f)' };
+  }
+
+  /* ── Overall exam grade calculator ── */
+  function getOverallGrade(total) {
+    for (const g of GRADES) {
+      if (total >= g.min && total <= g.max) return g;
+    }
+    return GRADES[GRADES.length - 1];
+  }
+
   /* ═══════════════════════════════════════════
      INIT
      ═══════════════════════════════════════════ */
@@ -153,7 +190,12 @@
     const trackSelectorSection = document.getElementById('track-selector-section');
     if (trackSelectorSection) trackSelectorSection.classList.remove('hidden');
 
-    profileASelect.addEventListener('change', onProfileChange);
+    profileASelect.addEventListener('change', () => {
+      // Re-populate second dropdown to exclude new First Profile selection
+      updateProfileBOptions(profileBSelect.value);
+      onProfileChange();
+    });
+
     profileBSelect.addEventListener('change', onProfileChange);
 
     // Track Toggle Listeners
@@ -214,7 +256,7 @@
     // Auto-select first two
     if (filtered.length >= 2) {
       profileASelect.value = filtered[0].id;
-      profileBSelect.value = filtered[1].id;
+      updateProfileBOptions(filtered[1].id);
       onProfileChange();
     }
   }
@@ -227,27 +269,50 @@
     const prevB = profileBSelect.value;
 
     profileASelect.innerHTML = '';
-    profileBSelect.innerHTML = '';
-
     const filtered = getFilteredProfiles();
 
+    // Populate First Profile dropdown with all options
     filtered.forEach(p => {
-      const text = `${p.name} (${p.total} pts)`;
-
       const optA = document.createElement('option');
       optA.value = p.id;
-      optA.textContent = text;
+      optA.textContent = `${p.name} (${p.total} pts)`;
       profileASelect.appendChild(optA);
+    });
+
+    if (prevA && filtered.find(p => p.id === prevA)) {
+      profileASelect.value = prevA;
+    } else if (filtered.length > 0) {
+      profileASelect.value = filtered[0].id;
+    }
+
+    // Populate Second Profile dropdown excluding the selected First Profile option
+    updateProfileBOptions(prevB);
+  }
+
+  /* ── Populates/filters Second dropdown based on First dropdown selection ── */
+  function updateProfileBOptions(preferredValue) {
+    const selectedA = profileASelect.value;
+    const filtered = getFilteredProfiles();
+
+    profileBSelect.innerHTML = '';
+    filtered.forEach(p => {
+      if (p.id === selectedA) return; // exclude selected A
 
       const optB = document.createElement('option');
       optB.value = p.id;
-      optB.textContent = text;
+      optB.textContent = `${p.name} (${p.total} pts)`;
       profileBSelect.appendChild(optB);
     });
 
-    // Restore previous selection if still valid
-    if (prevA && filtered.find(p => p.id === prevA)) profileASelect.value = prevA;
-    if (prevB && filtered.find(p => p.id === prevB)) profileBSelect.value = prevB;
+    // Restore previous selection in B if it's still valid
+    if (preferredValue && preferredValue !== selectedA && filtered.find(p => p.id === preferredValue)) {
+      profileBSelect.value = preferredValue;
+    } else {
+      const options = profileBSelect.querySelectorAll('option');
+      if (options.length > 0) {
+        profileBSelect.value = options[0].value;
+      }
+    }
   }
 
   /* ═══════════════════════════════════════════
@@ -594,7 +659,7 @@
   }
 
   /* ═══════════════════════════════════════════
-     5. COLOR-CODED DATA TABLE
+     5. COLOR-CODED DATA TABLE (COMPARING GRADES)
      ═══════════════════════════════════════════ */
   function buildCompareTable(profileA, profileB) {
     const tbody = document.getElementById('compare-tbody');
@@ -617,14 +682,23 @@
         diffText = `${diff}`;
       }
 
+      // Calculate subject grade letters
+      const gradeA = getSubjectGrade(scoresA[i], maxes[i]);
+      const gradeB = getSubjectGrade(scoresB[i], maxes[i]);
+
+      const colorsA = GRADE_COLORS[gradeA.letter];
+      const colorsB = GRADE_COLORS[gradeB.letter];
+
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${name}</td>
         <td style="font-family: 'JetBrains Mono', monospace; font-weight: 500; white-space: nowrap;">
-          ${scoresA[i]} <span style="opacity: 0.4; font-size: 0.7rem;">/ ${maxes[i]}</span>
+          ${scoresA[i]} <span style="opacity: 0.45; font-size: 0.7rem;">/ ${maxes[i]}</span>
+          <span class="grade-badge" style="background: ${colorsA.bg}; color: ${colorsA.text};">${gradeA.letter}</span>
         </td>
         <td style="font-family: 'JetBrains Mono', monospace; font-weight: 500; white-space: nowrap;">
-          ${scoresB[i]} <span style="opacity: 0.4; font-size: 0.7rem;">/ ${maxes[i]}</span>
+          ${scoresB[i]} <span style="opacity: 0.45; font-size: 0.7rem;">/ ${maxes[i]}</span>
+          <span class="grade-badge" style="background: ${colorsB.bg}; color: ${colorsB.text};">${gradeB.letter}</span>
         </td>
         <td class="${diffClass}" style="font-family: 'JetBrains Mono', monospace;">
           ${diffText}
@@ -647,12 +721,25 @@
       totalDiffText = `${totalDiff}`;
     }
 
+    // Calculate overall grade letters
+    const overallGradeA = getOverallGrade(totalA);
+    const overallGradeB = getOverallGrade(totalB);
+
+    const overallColorsA = GRADE_COLORS[overallGradeA.letter];
+    const overallColorsB = GRADE_COLORS[overallGradeB.letter];
+
     const totalRow = document.createElement('tr');
     totalRow.className = 'total-row';
     totalRow.innerHTML = `
       <td style="font-weight: 700;">${t().totalLabel}</td>
-      <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${totalA} <span style="opacity: 0.4; font-size: 0.7rem;">/ 500</span></td>
-      <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${totalB} <span style="opacity: 0.4; font-size: 0.7rem;">/ 500</span></td>
+      <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">
+        ${totalA} <span style="opacity: 0.45; font-size: 0.7rem;">/ 500</span>
+        <span class="grade-badge" style="background: ${overallColorsA.bg}; color: ${overallColorsA.text};">${overallGradeA.letter}</span>
+      </td>
+      <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">
+        ${totalB} <span style="opacity: 0.45; font-size: 0.7rem;">/ 500</span>
+        <span class="grade-badge" style="background: ${overallColorsB.bg}; color: ${overallColorsB.text};">${overallGradeB.letter}</span>
+      </td>
       <td class="${totalDiffClass}" style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${totalDiffText}</td>
     `;
     tbody.appendChild(totalRow);
