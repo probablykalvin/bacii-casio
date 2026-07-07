@@ -13,5 +13,5 @@ A fast and accurate BACII grade calculator.
 ## Upcoming Features
 
 - [ ] Cross-platform profile synchronization (via Google Login)
-- [ ] Score profile comparisons
-- [ ] Custom profile names displayed on downloaded scorecards
+- [x] Score profile comparisons
+- [x] Custom profile names displayed on downloaded scorecards
