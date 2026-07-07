@@ -796,6 +796,21 @@ main {
     padding: clamp(8px, 2vw, 10px) clamp(12px, 3vw, 20px);
     font-size: clamp(0.75rem, 2.5vw, 0.85rem);
   }
+  .grade-table th, .grade-table td {
+    padding: 6px 4px;
+    font-size: clamp(0.6rem, 2.5vw, 0.75rem);
+  }
+  .grade-badge {
+    padding: 2px 4px;
+    font-size: clamp(0.5rem, 2vw, 0.65rem);
+    min-width: 16px;
+    margin-left: 2px;
+  }
+  .badge-pass, .badge-fail, .badge-neutral {
+    font-size: clamp(0.55rem, 2vw, 0.7rem);
+    min-width: 35px !important;
+    padding: 2px 4px;
+  }
 }
 
 /* ───────────── MISC ───────────── */

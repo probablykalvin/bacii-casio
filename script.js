@@ -161,16 +161,16 @@
     social:  [125, 75, 75, 75, 75, 50, 75]
   };
 
-  const MAX_SCORE = 500;
+  const MAX_SCORE = 475;
 
   /* ── Grade thresholds ── */
   const GRADES = [
-    { letter: 'A', min: 427, max: 500, color: 'var(--grade-a)' },
-    { letter: 'B', min: 380, max: 426, color: 'var(--grade-b)' },
-    { letter: 'C', min: 332, max: 379, color: 'var(--grade-c)' },
-    { letter: 'D', min: 285, max: 331, color: 'var(--grade-d)' },
-    { letter: 'E', min: 237, max: 284, color: 'var(--grade-e)' },
-    { letter: 'F', min: 0,   max: 236, color: 'var(--grade-f)' }
+    { letter: 'A', min: 406, max: 475, color: 'var(--grade-a)' },
+    { letter: 'B', min: 361, max: 405, color: 'var(--grade-b)' },
+    { letter: 'C', min: 316, max: 360, color: 'var(--grade-c)' },
+    { letter: 'D', min: 271, max: 315, color: 'var(--grade-d)' },
+    { letter: 'E', min: 226, max: 270, color: 'var(--grade-e)' },
+    { letter: 'F', min: 0,   max: 225, color: 'var(--grade-f)' }
   ];
 
   /* ── DOM refs ── */

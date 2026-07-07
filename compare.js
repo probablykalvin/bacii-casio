@@ -70,12 +70,12 @@
   };
 
   const GRADES = [
-    { letter: 'A', min: 427, max: 500, color: 'var(--grade-a)' },
-    { letter: 'B', min: 380, max: 426, color: 'var(--grade-b)' },
-    { letter: 'C', min: 332, max: 379, color: 'var(--grade-c)' },
-    { letter: 'D', min: 285, max: 331, color: 'var(--grade-d)' },
-    { letter: 'E', min: 237, max: 284, color: 'var(--grade-e)' },
-    { letter: 'F', min: 0,   max: 236, color: 'var(--grade-f)' }
+    { letter: 'A', min: 406, max: 475, color: 'var(--grade-a)' },
+    { letter: 'B', min: 361, max: 405, color: 'var(--grade-b)' },
+    { letter: 'C', min: 316, max: 360, color: 'var(--grade-c)' },
+    { letter: 'D', min: 271, max: 315, color: 'var(--grade-d)' },
+    { letter: 'E', min: 226, max: 270, color: 'var(--grade-e)' },
+    { letter: 'F', min: 0,   max: 225, color: 'var(--grade-f)' }
   ];
 
   const GRADE_COLORS = {
@@ -444,7 +444,7 @@
             displayColors: false,
             callbacks: {
               title: (items) => items[0].label,
-              label: (item) => `${t().totalScoreLabel}: ${item.raw} / 500`
+              label: (item) => `${t().totalScoreLabel}: ${item.raw} / 475`
             }
           }
         },
@@ -460,7 +460,7 @@
           },
           y: {
             min: 0,
-            max: 500,
+            max: 475,
             ticks: {
               color: 'rgba(255,255,255,0.4)',
               stepSize: 100,
@@ -613,7 +613,7 @@
       },
       options: {
         responsive: true,
-        maintainAspectRatio: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: {
             position: 'bottom',
@@ -692,11 +692,11 @@
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${name}</td>
-        <td style="font-family: 'JetBrains Mono', monospace; font-weight: 500; white-space: nowrap;">
+        <td style="font-family: 'JetBrains Mono', monospace; font-weight: 500; white-space: normal;">
           ${scoresA[i]} <span style="opacity: 0.45; font-size: 0.7rem;">/ ${maxes[i]}</span>
           <span class="grade-badge" style="background: ${colorsA.bg}; color: ${colorsA.text};">${gradeA.letter}</span>
         </td>
-        <td style="font-family: 'JetBrains Mono', monospace; font-weight: 500; white-space: nowrap;">
+        <td style="font-family: 'JetBrains Mono', monospace; font-weight: 500; white-space: normal;">
           ${scoresB[i]} <span style="opacity: 0.45; font-size: 0.7rem;">/ ${maxes[i]}</span>
           <span class="grade-badge" style="background: ${colorsB.bg}; color: ${colorsB.text};">${gradeB.letter}</span>
         </td>
@@ -733,11 +733,11 @@
     totalRow.innerHTML = `
       <td style="font-weight: 700;">${t().totalLabel}</td>
       <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">
-        ${totalA} <span style="opacity: 0.45; font-size: 0.7rem;">/ 500</span>
+        ${totalA} <span style="opacity: 0.45; font-size: 0.7rem;">/ 475</span>
         <span class="grade-badge" style="background: ${overallColorsA.bg}; color: ${overallColorsA.text};">${overallGradeA.letter}</span>
       </td>
       <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">
-        ${totalB} <span style="opacity: 0.45; font-size: 0.7rem;">/ 500</span>
+        ${totalB} <span style="opacity: 0.45; font-size: 0.7rem;">/ 475</span>
         <span class="grade-badge" style="background: ${overallColorsB.bg}; color: ${overallColorsB.text};">${overallGradeB.letter}</span>
       </td>
       <td class="${totalDiffClass}" style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${totalDiffText}</td>

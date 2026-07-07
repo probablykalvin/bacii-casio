@@ -75,7 +75,7 @@
         <div class="result-details">
           <div class="score-row">
             <span class="score-value" id="score-value">0</span>
-            <span class="score-max">/ 500</span>
+            <span class="score-max">/ 475</span>
           </div>
           <div class="progress-track">
             <div class="progress-fill" id="progress-fill"></div>
@@ -90,21 +90,19 @@
         <h4 style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
           <span>📊</span> <span id="breakdown-title-text">Detailed Breakdown</span>
         </h4>
-        <div style="overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; margin: 0 -16px; padding: 0 16px; box-sizing: border-box; display: block; max-width: calc(100% + 32px);">
-          <table class="grade-table" id="breakdown-table" style="min-width: 320px;">
-            <thead>
-              <tr>
-                <th id="th-breakdown-subject">Subject</th>
-                <th id="th-breakdown-score">Score</th>
-                <th id="th-breakdown-pct">Percentage</th>
-                <th id="th-breakdown-grade">Grade</th>
-              </tr>
-            </thead>
-            <tbody id="breakdown-tbody">
-              <!-- Populated by JS -->
-            </tbody>
-          </table>
-        </div>
+        <table class="grade-table" id="breakdown-table">
+          <thead>
+            <tr>
+              <th id="th-breakdown-subject">Subject</th>
+              <th id="th-breakdown-score">Score</th>
+              <th id="th-breakdown-pct">Percentage</th>
+              <th id="th-breakdown-grade">Grade</th>
+            </tr>
+          </thead>
+          <tbody id="breakdown-tbody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
       </div>
 
       <!-- Share Button -->
@@ -130,12 +128,12 @@
           </tr>
         </thead>
         <tbody id="grade-tbody">
-          <tr data-grade="A"><td>A</td><td>427 – 500</td><td><span class="badge-pass" data-pass-badge>Pass</span></td></tr>
-          <tr data-grade="B"><td>B</td><td>380 – 426</td><td><span class="badge-pass" data-pass-badge>Pass</span></td></tr>
-          <tr data-grade="C"><td>C</td><td>332 – 379</td><td><span class="badge-pass" data-pass-badge>Pass</span></td></tr>
-          <tr data-grade="D"><td>D</td><td>285 – 331</td><td><span class="badge-pass" data-pass-badge>Pass</span></td></tr>
-          <tr data-grade="E"><td>E</td><td>237 – 284</td><td><span class="badge-pass" data-pass-badge>Pass</span></td></tr>
-          <tr data-grade="F"><td>F</td><td>0 – 236</td><td><span class="badge-fail" data-fail-badge>Fail</span></td></tr>
+          <tr data-grade="A"><td>A</td><td>406 – 475</td><td><span class="badge-pass" data-pass-badge>Pass</span></td></tr>
+          <tr data-grade="B"><td>B</td><td>361 – 405</td><td><span class="badge-pass" data-pass-badge>Pass</span></td></tr>
+          <tr data-grade="C"><td>C</td><td>316 – 360</td><td><span class="badge-pass" data-pass-badge>Pass</span></td></tr>
+          <tr data-grade="D"><td>D</td><td>271 – 315</td><td><span class="badge-pass" data-pass-badge>Pass</span></td></tr>
+          <tr data-grade="E"><td>E</td><td>226 – 270</td><td><span class="badge-pass" data-pass-badge>Pass</span></td></tr>
+          <tr data-grade="F"><td>F</td><td>0 – 225</td><td><span class="badge-fail" data-fail-badge>Fail</span></td></tr>
         </tbody>
       </table>
     </section>

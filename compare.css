@@ -314,7 +314,14 @@
     grid-template-columns: 1fr;
   }
   .compare-table {
-    min-width: 340px;
+    min-width: 100%;
+  }
+  .compare-table th, .compare-table td {
+    padding: 6px 4px;
+    font-size: clamp(0.6rem, 2.5vw, 0.75rem);
+  }
+  .chart-container {
+    min-height: 280px;
   }
 }
 
