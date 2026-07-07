@@ -70,7 +70,9 @@
       countdownHours: 'Hours',
       countdownMinutes: 'Minutes',
       countdownSeconds: 'Seconds',
-      countdownReached: 'Bac II Exam is here!'
+      countdownReached: 'Bac II Exam is here!',
+      toastMessage: 'Try the new comparing feature!',
+      toastLink: 'Check it out →'
     },
     kh: {
       tag: 'បាក់ II',
@@ -137,7 +139,9 @@
       countdownHours: 'ម៉ោង',
       countdownMinutes: 'នាទី',
       countdownSeconds: 'វិនាទី',
-      countdownReached: 'ដល់ថ្ងៃប្រឡងបាក់ឌុបហើយ!'
+      countdownReached: 'ដល់ថ្ងៃប្រឡងបាក់ឌុបហើយ!',
+      toastMessage: 'សាកល្បងមុខងារប្រៀបធៀបថ្មី!',
+      toastLink: 'សាកល្បងឥឡូវនេះ →'
     }
   };
 
@@ -372,6 +376,12 @@
     if (cdLabelMinutes) cdLabelMinutes.textContent = tr.countdownMinutes;
     const cdLabelSeconds = document.getElementById('cd-label-seconds');
     if (cdLabelSeconds) cdLabelSeconds.textContent = tr.countdownSeconds;
+
+    // Toast popup
+    const toastMsg = document.getElementById('toast-message');
+    if (toastMsg) toastMsg.textContent = tr.toastMessage;
+    const toastLnk = document.getElementById('toast-link');
+    if (toastLnk) toastLnk.textContent = tr.toastLink;
 
     if (window.updateCountdownNow) {
       window.updateCountdownNow();
@@ -1138,4 +1148,38 @@
     });
   }
 
+  /* ─── TOAST POPUP LOGIC ─── */
+  const featureToast = document.getElementById('feature-toast');
+  const toastCloseBtn = document.getElementById('toast-close');
+  const toastLnkMain = document.getElementById('toast-link');
+
+  if (featureToast && toastCloseBtn) {
+    const toastDismissed = localStorage.getItem('baccasio-toast-dismissed');
+    
+    // Show toast after 1.5 seconds if not dismissed
+    if (!toastDismissed) {
+      setTimeout(() => {
+        featureToast.classList.remove('hidden');
+      }, 1500);
+    }
+
+    const dismissToast = () => {
+      featureToast.classList.add('hidden');
+      try {
+        localStorage.setItem('baccasio-toast-dismissed', 'true');
+      } catch (e) {}
+    };
+
+    toastCloseBtn.addEventListener('click', dismissToast);
+    
+    if (toastLnkMain) {
+      toastLnkMain.addEventListener('click', (e) => {
+        dismissToast();
+        if (window.location.protocol === 'file:') {
+          e.preventDefault();
+          window.location.href = 'compare/index.html';
+        }
+      });
+    }
+  }
 })();

@@ -309,6 +309,10 @@
   }
   .charts-grid {
     grid-template-columns: 1fr;
+    padding: 0;
+  }
+  .charts-grid .card {
+    padding: 20px;
   }
   .insight-cards {
     grid-template-columns: 1fr;
