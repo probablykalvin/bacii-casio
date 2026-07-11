@@ -825,14 +825,24 @@
 
     modalCopyBtn.addEventListener('click', () => {
       const inputs = grid.querySelectorAll('input');
-      const scores = Array.from(inputs).map(inp => inp.value || 0).join('-');
-      const prefix = currentTrack === 'science' ? 'sci' : 'soc';
+      const scores = Array.from(inputs).map((inp, i) => {
+        const val = parseInt(inp.value, 10) || 0;
+        const max = SUBJECT_MAX[currentTrack][i] || 125;
+        return Math.min(Math.max(val, 0), max);
+      });
+      
+      let num = currentTrack === 'science' ? 0 : 1;
+      scores.forEach(s => {
+        num = num * 126 + s;
+      });
+      const packedStr = num.toString(36);
+      
       const scorecardName = scorecardNameInput ? scorecardNameInput.value.trim() : '';
-      // Include the name in the payload: prefix-scores|name
-      let payload = prefix + '-' + scores;
+      let payload = 'v2-' + packedStr;
       if (scorecardName) {
-        payload += '|' + scorecardName;
+        payload += '-' + scorecardName;
       }
+      
       const encoded = btoa(unescape(encodeURIComponent(payload))).replace(/=/g, ''); // Support unicode names
       
       const url = new URL(window.location.href);
@@ -904,17 +914,34 @@
         let b64 = sParam;
         while (b64.length % 4 > 0) b64 += '=';
         const decoded = decodeURIComponent(escape(atob(b64))); // Support unicode names
-        // Check for name separator '|'
-        let mainPart = decoded;
-        if (decoded.includes('|')) {
-          const pipeIdx = decoded.indexOf('|');
-          mainPart = decoded.substring(0, pipeIdx);
-          currentScorecardName = decoded.substring(pipeIdx + 1);
-        }
-        const parts = mainPart.split('-');
-        if (parts.length >= 8) {
-          sharedTrack = parts[0] === 'soc' ? 'social' : 'science';
-          scoreArr = parts.slice(1);
+        if (decoded.startsWith('v2-')) {
+          const firstDash = decoded.indexOf('-', 3);
+          let packedStr = decoded.substring(3);
+          if (firstDash !== -1) {
+            packedStr = decoded.substring(3, firstDash);
+            currentScorecardName = decoded.substring(firstDash + 1);
+          }
+          let num = parseInt(packedStr, 36);
+          const tempScores = [];
+          for (let i = 0; i < 7; i++) {
+            tempScores.unshift(num % 126);
+            num = Math.floor(num / 126);
+          }
+          scoreArr = tempScores;
+          sharedTrack = num === 0 ? 'science' : 'social';
+        } else {
+          // Check for name separator '|' (v1 format)
+          let mainPart = decoded;
+          if (decoded.includes('|')) {
+            const pipeIdx = decoded.indexOf('|');
+            mainPart = decoded.substring(0, pipeIdx);
+            currentScorecardName = decoded.substring(pipeIdx + 1);
+          }
+          const parts = mainPart.split('-');
+          if (parts.length >= 8) {
+            sharedTrack = parts[0] === 'soc' ? 'social' : 'science';
+            scoreArr = parts.slice(1);
+          }
         }
       } catch (e) {
         console.error('Invalid share link format.');
